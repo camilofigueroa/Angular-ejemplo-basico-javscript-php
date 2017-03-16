@@ -1,0 +1,80 @@
+
+<!--
+        Autor: Camilo Figueroa ( Crivera )
+        Este ejemplo se ha construido para verificar, sin usar bases de datos, la comunicación entre javascript con la
+        tecnología AngularJs y un archivo de php. 
+-->
+
+
+<!DOCTYPE html>
+<!-- Cuadro 1 -->
+<html ng-app="acumuladorApp"><!--Hay que observar que aquí se inicia el ng-app-->
+    <head>
+        <title>Ej de AngularJS</title>
+        <script src="js/angular.min.js"></script>
+    </head>
+    <body>
+       
+        <!-- Cuadro 2 --> 
+        <div ng-controller="acumuladorAppCtrl"><!--Super importante el controlador aquí-->
+            
+            Por favor digite un apellido para los datos de la persona que aparecer&aacute;n.
+            <br>
+            
+            <input type="text" ng-model="datos.texto2" ng-change="cargar_datos_php()"> 
+            <br>
+                   
+            <!-- Esto es importante para que se escriban los resultados como un ciclo dependiendo de la información del php  -->
+            <div ng-repeat="x in campos">
+                Alias: {{ x.Alias }} Nombre: {{ x.Nombres }} {{ x.Apellidos }} {{ x.Documento }}
+            </div>
+    
+        </div>
+        
+        <script>
+            
+            //Cuadro 3
+            var acumuladorApp = angular.module( 'acumuladorApp', [] );
+            
+            //Cuadro 4
+            acumuladorApp.controller( "acumuladorAppCtrl",
+                
+                //Cuadro 5
+                [ "$scope", "$http", 
+                 
+                    //Cuadro 6
+                    function( $scope, $http )
+                    {
+                        
+                        /**
+                         * Cuadro 7. Esta función se activa al usar el texto 2.
+                         */
+                        $scope.cargar_datos_php = function()
+                        {
+                            var cad2 = $scope.datos.texto2;
+                            
+                            console.log( cad2 );
+                                
+                            //Cuadro 8.
+                            //Aquí se hace el llamado a un php con conexión a MySQL.
+                            $http.get( 'llamado-php.php?cadena=' + cad2 ).success
+                            (
+                                //Cuadro 9.
+                                function( response ) 
+                                { 
+                                    console.log( response ); //Se imprime por consola lo que está llegando.
+                                    $scope.campos = response.records; //Lo que se retorna del php es un Json con datos de personas.
+                                }
+                            );   
+                                            
+                        }
+                    } // Fin de cuadro 6.
+                ] // Fin de [ "$scope", "$http" ... o cuadro 5
+            ); // Fin de cuadro 4 o acumuladorApp.controller( "acumuladorAppCtrl",
+            
+        </script>
+    
+    </body>
+</html>
+
+
